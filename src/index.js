@@ -3,7 +3,12 @@
 const _ = require('lodash');
 const Boom = require('boom');
 const Hapi = require('@hapi/hapi');
+const HapiSwagger = require('hapi-swagger');
+const Inert = require('@hapi/inert');
 const Joi = require('joi');
+const Pack = require('../package');
+const Vision = require('@hapi/vision');
+
 const { Pool } = require('pg');
 const { v4: uuidv4 } = require('uuid');
 
@@ -19,11 +24,18 @@ const pool = new Pool({
 // API
 const init = async () => {
     const server = Hapi.server({ port: 8080, host: '0.0.0.0' });
+    const swaggerOptions = { info: { title: 'Trala Address Book API', version: Pack.version } };
+
+    await server.register([ Inert, Vision, {
+        plugin: HapiSwagger,
+        options: swaggerOptions
+    }]);
 
     // Routes
     server.route({
         method: 'GET',
         path: '/v1/contact/{id}',
+        options: { tags: ['api'] },
         handler: async (request, h) => {
             try {
                 const { id: contactId } = request.params;
@@ -35,6 +47,7 @@ const init = async () => {
     server.route({
         method: 'GET',
         path: '/v1/contacts',
+        options: { tags: ['api'] },
         handler: async (request, h) => {
             try {
                 const res = await pool.query("SELECT * FROM contacts");
@@ -46,6 +59,7 @@ const init = async () => {
         method: 'POST',
         path: '/v1/contact',
         options: {
+            tags: ['api'],
             validate: {
                 payload: Joi.object({
                     email: Joi.string().min(1).max(255).required(),
@@ -86,6 +100,7 @@ const init = async () => {
         method: 'PUT',
         path: '/v1/contact/{id}',
         options: {
+            tags: ['api'],
             validate: {
                 params: Joi.object({
                     id: Joi.string().min(36).max(36).required(),
