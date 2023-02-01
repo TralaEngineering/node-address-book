@@ -35,7 +35,7 @@ const init = async () => {
     server.route({
         method: 'GET',
         path: '/v1/contact/{id}',
-        options: { tags: ['api'] },
+        options: { cors: true, tags: ['api'] },
         handler: async (request, h) => {
             try {
                 const { id: contactId } = request.params;
@@ -47,7 +47,7 @@ const init = async () => {
     server.route({
         method: 'GET',
         path: '/v1/contacts',
-        options: { tags: ['api'] },
+        options: { cors: true, tags: ['api'] },
         handler: async (request, h) => {
             try {
                 const res = await pool.query("SELECT * FROM contacts");
@@ -59,6 +59,7 @@ const init = async () => {
         method: 'POST',
         path: '/v1/contact',
         options: {
+            cors: true,
             tags: ['api'],
             validate: {
                 payload: Joi.object({
@@ -100,6 +101,7 @@ const init = async () => {
         method: 'PUT',
         path: '/v1/contact/{id}',
         options: {
+            cors: true,
             tags: ['api'],
             validate: {
                 params: Joi.object({
