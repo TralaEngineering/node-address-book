@@ -9,11 +9,11 @@ const { v4: uuidv4 } = require('uuid');
 
 // Database
 const pool = new Pool({
-    user: 'trala-address-book',
-    database: 'trala-address-book',
-    password: '5liDbxXDsV4HJ6mqPcCq',
-    port: 5432,
-    host: 'localhost',
+    user: process.env.PG_USERNAME,
+    database: process.env.PG_DATABASE,
+    password: process.env.PG_PASSWORD,
+    port: process.env.PG_PORT,
+    host: process.env.PG_HOSTNAME,
   });
 
 // API
@@ -25,17 +25,21 @@ const init = async () => {
         method: 'GET',
         path: '/v1/contact/{id}',
         handler: async (request, h) => {
-            const { id: contactId } = request.params;
-            const res = await pool.query("SELECT * FROM contacts WHERE id = $1", [ contactId ]);
-            return res.rows[0];
+            try {
+                const { id: contactId } = request.params;
+                const res = await pool.query("SELECT * FROM contacts WHERE id = $1", [ contactId ]);
+                return res.rows[0] || {};
+            } catch (error) { return Boom.internal(error); }
         }
     });
     server.route({
         method: 'GET',
         path: '/v1/contacts',
         handler: async (request, h) => {
-            const res = await pool.query("SELECT * FROM contacts");
-            return res.rows;
+            try {
+                const res = await pool.query("SELECT * FROM contacts");
+                return res.rows || [];
+            } catch (error) { return Boom.internal(error); }
         }
     });
     server.route({
@@ -75,9 +79,7 @@ const init = async () => {
                     [ contact.id, contact.email, contact.first_name, contact.middle_initial, contact.last_name, contact.birth_date, contact.country_code, contact.phone_number ],
                 );
                 return insertRes.rows[0];
-            } catch (error) {
-                return Boom.internal(error);
-            }
+            } catch (error) { return Boom.internal(error); }
         }
     });
     server.route({
