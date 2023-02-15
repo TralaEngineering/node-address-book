@@ -1,0 +1,40 @@
+version: '3.9'
+services:
+
+### Postgres server
+  pgsql:
+    image: postgres:12
+    container_name: "trala-pgsql"
+    environment:
+      POSTGRES_USER: "trala-address-book"
+      POSTGRES_PASSWORD: "5liDbxXDsV4HJ6mqPcCq"
+      POSTGRES_DB: "trala-address-book"
+    ports:
+      - "5432:5432"
+    volumes:
+      # Mount a host path to load a persisted database
+      - ../.docker/postgresql/data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trala-api -d trala-datacore"]
+      interval: 2s
+      timeout: 10s
+      retries: 5
+
+
+  ### Hapi-Core application
+  trala-address-book:
+    container_name: "trala-address-book"
+    build: .
+    depends_on:
+      pgsql:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DD_AGENT_HOST: datadog
+    command: ["yarn", "run", "dev"]
+    ports:
+      - "8080:8080" # Application
+    volumes:
+      # Mount the application
+      - ./src:/app/src
