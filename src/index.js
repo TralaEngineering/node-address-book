@@ -26,7 +26,7 @@ const pool = new Pool({
 
 // API
 const init = async () => {
-    const server = Hapi.server({ port: 8080, host: '0.0.0.0' });
+    const server = Hapi.server({ host: process.env.APP_HOST, port: process.env.APP_PORT });
     const swaggerOptions = { info: { title: 'Trala Address Book API', version: Pack.version } };
 
     await server.register([ Inert, Vision, {
