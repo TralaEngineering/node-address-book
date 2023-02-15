@@ -187,6 +187,13 @@
     "@hapi/cryptiles" "^6.0.0"
     "@hapi/hoek" "^10.0.0"
 
+"@hapi/joi-date@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@hapi/joi-date/-/joi-date-2.0.1.tgz#9d63bcc320fa64d9bb7a9b7f6ee3c1831019cbbb"
+  integrity sha512-8be8JUEC8Wm1Do3ryJy+TXmkAL13b2JwXn7gILBoor8LopY/M+hJskodzOOxfJdckkfWnbmbnMEyJW3d/gZMfA==
+  dependencies:
+    moment "2.x.x"
+
 "@hapi/mimos@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@hapi/mimos/-/mimos-7.0.0.tgz#bbe4130bb0235e63d75718f9d8b8f7401532e217"
@@ -618,6 +625,11 @@ minimist@^1.2.5:
   version "1.2.7"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.7.tgz#daa1c4d91f507390437c6a8bc01078e7000c4d18"
   integrity sha512-bzfL1YUZsP41gmu/qjrEk0Q6i2ix/cVeAhbCbqH9u3zYutS1cLg00qhrD0M2MVdCcx4Sc0UpP2eBWo9rotpq6g==
+
+moment@2.x.x:
+  version "2.29.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.4.tgz#3dbe052889fe7c1b2ed966fcb3a77328964ef108"
+  integrity sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==
 
 ms@^2.1.1:
   version "2.1.3"
