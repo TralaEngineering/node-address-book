@@ -9,6 +9,9 @@ const JoiBase = require('joi');
 const JoiDate = require ('@hapi/joi-date');
 const Pack = require('../package');
 const Vision = require('@hapi/vision');
+const generateDate = require('random-date-generator');
+const generateEmail = require('random-email');
+const { uniqueNamesGenerator, names } = require('unique-names-generator');
 
 const { Pool } = require('pg');
 const { v4: uuidv4 } = require('uuid');
@@ -22,7 +25,17 @@ const pool = new Pool({
     password: process.env.PG_PASSWORD,
     port: process.env.PG_PORT,
     host: process.env.PG_HOSTNAME,
-  });
+});
+
+const generateInt = (min, max) => {  
+    return Math.floor(
+        Math.random() * (max - min) + min
+    )
+};
+const generateLetter = () => {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    return alphabet[Math.floor(Math.random() * alphabet.length)];
+}
 
 // API
 const init = async () => {
@@ -35,6 +48,34 @@ const init = async () => {
     }]);
 
     // Routes
+    server.route({
+        method: 'POST',
+        path: '/v1/generate/fake/data',
+        handler: async (request, h) => {
+            try {
+                let startDate = new Date(1940, 0, 1);
+                let endDate = new Date(2023, 11, 31);
+                for (let i = 0; i < 1000000; i += 1) {
+                    
+                    const contact = {
+                        id: uuidv4(),
+                        email: generateEmail(),
+                        first_name: uniqueNamesGenerator({ dictionaries: [names] }),
+                        middle_initial: generateLetter(),
+                        last_name: uniqueNamesGenerator({ dictionaries: [names] }),
+                        birth_date: generateDate.getRandomDateInRange(startDate, endDate),
+                        country_code: '+1',
+                        phone_number: generateInt(2222222222, 9999999999),
+                    };
+                    const insertRes = await pool.query(
+                        "INSERT INTO contacts(id, email, first_name, middle_initial, last_name, birth_date, country_code, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+                        [ contact.id, contact.email, contact.first_name, contact.middle_initial, contact.last_name, contact.birth_date, contact.country_code, contact.phone_number ],
+                    );
+                }
+                return true;
+            } catch (error) { return Boom.internal(error); }
+        }
+    });
     server.route({
         method: 'GET',
         path: '/v1/contact/{id}',

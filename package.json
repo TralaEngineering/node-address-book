@@ -27,6 +27,9 @@
     "joi": "^17.7.0",
     "lodash": "^4.17.21",
     "pg": "^8.9.0",
+    "random-date-generator": "^1.0.2",
+    "random-email": "^1.0.3",
+    "unique-names-generator": "^4.7.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {
